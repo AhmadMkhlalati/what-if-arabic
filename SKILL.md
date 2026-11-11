@@ -5,7 +5,7 @@ description: Make a "What If" animated episode from one topic line ("What if you
 
 # What If animation
 
-One topic line in, a finished 15-25 second episode out. Every frame is SVG that Claude writes (rendered by
+One topic line in, a finished episode out, 15 to 25 seconds by default, any length the user asks for, full screen or mobile. Every frame is SVG that Claude writes (rendered by
 Remotion). No audio is generated: no AI voice, no sound effects, no music, no API keys. The only audio is a voice recording the user supplies. Two examples ship in `studio/src/episodes/`, both ready to
 render: `rewind` ("What if you could rewind 10 seconds?", the proof clip: shots played backwards as the power) and
 `copy-paste` ("What if you could copy and paste anything?", the skill's first full run: a new kitchen set, a
@@ -18,7 +18,7 @@ schematic for the science beat, a cliffhanger blackout). Read the one closest to
 | `references/kit.md` | The building blocks: engine, cast, sets, room kit, light, UI, looks, and how to add each |
 | `references/traps.md` | Everything that cost time on the two example episodes |
 | `studio/` | The Remotion project: copy it once, then every episode lives in it |
-| `scripts/` | plan, stills, board, motiongrid, master (Python 3.9+ and Node) |
+| `scripts/` | voiceover, plan, stills, board, motiongrid, master (Python 3.9+ and Node) |
 
 ## Rules
 
@@ -53,30 +53,57 @@ a newer engine, copy `<skill>/studio/src/engine` over its `src/engine`.
 
 ## The pipeline
 
-Open by telling the user the steps in one line (topic, script, voice, shot list, storyboard, check, animate, render)
+Open by telling the user the steps in one line (topic, script, voice-over script and voice, shot list, storyboard, check, animate, render)
 and that you'll ask at each one. Then begin with step 1.
 
 Work through the steps in order. Each ends on something you look at before the next.
 
 ### 1. Script
 
-**Ask first:** "What's your topic line (what if ...)? Any power, tone or language (English/Arabic) you want?" Wait.
+**Ask first** (one message, then wait for all the answers):
+1. "What's your topic line (what if ...)? Any power, tone or language (English/Arabic) you want?"
+2. "How long should the video be?" Offer 15 s, 25 s (the default), 40 s or 60 s, or their own number. The target sets the
+   script length (about 2.7 words per second, so 25 s is 55 to 65 words) and the number of shots (about 27 cuts a minute).
+   The genre's sweet spot is 15 to 25 s; for longer, add escalation demos and keep a new picture every 2 to 3 s.
+3. "Full screen (landscape 16:9, for YouTube and TV) or mobile screen (vertical 9:16, for Shorts, Reels and TikTok)?"
+   Landscape is the default. Mobile sets `"format": "vertical"` in `episode.json`: the render becomes 1080 x 1920 with
+   the whole picture scaled to the phone's width and centred, so nothing is cropped. Because it then sits in the middle
+   third of the screen, keep the action large and centred, and tell the user the bars above and below are empty.
+Repeat their choices back in one line before you write the script.
 After writing the script, show it and ask: "Happy with this script, or what should change?" Wait for approval.
 
 Read `references/formula.md`. Search YouTube for the premise first: if a What If channel already has that exact
 episode, change the power or the rule. From the topic line, decide the power's word, its rule, three escalating
-demos and the turn (one real fact with a number). Write `src/episodes/<slug>/episode.json` with `id` (PascalCase,
+demos and the turn (one real fact with a number). Write `src/episodes/<slug>/episode.json` with `format` (`"landscape"` or `"vertical"`, from the user's answer), `id` (PascalCase,
 the composition name), `slug`, `topic`, `title` (two lines), `script` (one entry per beat) and `science` (each fact:
-the claim, the working, the source). 45 to 65 words. Every line must be a picture; the script is the plan for the shots, nothing is spoken.
+the claim, the working, the source). Length by the target they chose (45 to 65 words for 15 to 25 s). Every line must be a picture; the script is the plan for the shots, nothing is spoken.
 
-### 2. Your voice (optional, the user's own)
+### 2. Voice-over script, then your voice (the user's own)
 
-**Ask:** "Do you want a voice-over? I don't generate audio, so you'd record it yourself. Want me to give you the final
-script text to read? Record it on your phone or computer and tell me the file path (wav, mp3 or m4a), or say skip for
-a silent video." Wait. If they give a file, copy it to `public/<slug>/voice.<ext>` (create the folder), check its length
-with ffprobe against the 15-25 s target, and tell them if it's far off (offer to trim the script or have them re-record).
-Then ask roughly when each line starts (or listen to the length) so the cuts can be set; plan.py ends the episode at
-the recording's length plus a short tail. If they skip, the video is silent.
+**First, write the voice-over script** for the user to review, so they can make the sound themselves. Save the chosen
+length in `episode.json` as `"length": <seconds>`, then run:
+
+```bash
+python <skill>/scripts/voiceover.py <slug>
+```
+
+It writes `out/<slug>/voiceover.md` (the review sheet: each beat, word count, estimated seconds, checks) and
+`out/<slug>/voiceover.txt` (the clean narration, one paragraph, to paste into any text-to-speech tool or read aloud).
+Show the user the narration and the checks. **Ask:** "Here is the voice-over script. Review it: anything to change in
+the wording, the length or the tone?" Wait, edit `episode.json`, re-run, and repeat until they approve.
+
+**For Arabic episodes (`"lang": "ar"`)** the narration must be **Modern Standard Arabic (Fusha, الفصحى) with full
+tashkeel** (التشكيل الكامل): a mark on every letter, shadda, tanween, sukun on silent letters, and no colloquial words
+(no شو، ليش، كتير، بدي، مش...). Write it that way in the script's `text`; `voiceover.py` counts the diacritics and
+flags thin tashkeel or colloquial words, and you must fix every flag before showing the user. Short sentences,
+natural Fusha rhythm, numbers written as words, a full stop where the voice should rest. See `references/arabic.md`.
+
+**Then ask about the recording:** "Now record this yourself, or paste voiceover.txt into a text-to-speech tool you
+choose. I don't generate audio. Send me the file path (wav, mp3 or m4a), or say skip for a silent video." Wait. If they
+give a file, copy it to `public/<slug>/voice.<ext>` (create the folder), check its length with ffprobe against the
+length they chose, and tell them if it's far off (offer to trim the script or have them re-record). Then ask roughly
+when each line starts (or listen to the length) so the cuts can be set; plan.py ends the episode at the recording's
+length plus a short tail. If they skip, the video is silent.
 
 ### 3. Shot list
 

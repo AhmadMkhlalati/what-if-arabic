@@ -12,11 +12,12 @@ import { Portrait, ArabicTitle, portraitDefaults } from './Portrait';
 
 export const Root: React.FC = () => {
   const common = { width: STUDIO.width, height: STUDIO.height, fps: STUDIO.fps };
+  const vertical = { ...common, width: 1080, height: 1920 }; // mobile episodes (episode.json "format": "vertical")
   return (
     <>
       {EPISODES.map((e) => (
         <React.Fragment key={e.id}>
-          <Composition id={e.id} component={e.Main} durationInFrames={Math.max(1, e.total)} {...common} />
+          <Composition id={e.id} component={e.Main} durationInFrames={Math.max(1, e.total)} {...(e.format === 'vertical' ? vertical : common)} />
           <Composition id={`${e.id}Board`} component={e.Board} durationInFrames={Math.max(1, e.shotCount)} {...common} />
         </React.Fragment>
       ))}

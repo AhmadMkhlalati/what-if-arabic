@@ -8,7 +8,7 @@ OpenCode with a free model. Maintained by [Ahmad Mkhlalati](https://github.com/A
 
 ## What it does
 
-1. **Writes the script** on the seven-beat What If formula (decoded from five scripts across four channels): a cold
+1. **Asks your topic, the video length and the screen shape** (full screen 16:9 or mobile 9:16), then **writes the script** on the seven-beat What If formula (decoded from five scripts across four channels): a cold
    open of quick demos, the premise as a title card, the fun, and a turn built on one real, checked fact.
 2. **Asks for your voice (optional):** you record it yourself; nothing is generated.
 3. **Lays out a shot list** on frame cues, at the genre's pace (about 27 cuts a minute in the opening and up).

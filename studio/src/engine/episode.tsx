@@ -26,6 +26,7 @@ export type Timeline = {
   segments: Seg[];
   shots: ShotInfo[];
   fx: Fx[];
+  format?: 'landscape' | 'vertical'; // landscape 1920x1080 (full screen) or vertical 1080x1920 (mobile)
   audio?: { voice?: string }; // the user's own recording, if they supplied one (public/<slug>/voice.*)
 };
 
@@ -119,8 +120,17 @@ export const Episode: React.FC<EpisodeProps> = ({ timeline: tl, shots, looks = {
   const lv = run ? Math.min(clamp((f - run.a + 1) / 2), clamp((run.b - f) / 2)) : 0;
   const jitter = def?.jitter && lv > 0 ? Math.sin(f * 13.7) * def.jitter * lv : 0;
   const { flash, x, y } = fxAt(tl, f);
+  const vertical = tl.format === 'vertical';
+  // mobile: the whole 16:9 picture scaled to the phone's width and centred, so nothing is cropped off
+  const Frame: React.FC<{ children: React.ReactNode }> = ({ children }) =>
+    vertical ? (
+      <div style={{ position: 'absolute', left: 0, top: (1920 - 607.5) / 2, width: 1920, height: 1080, transform: 'scale(0.5625)', transformOrigin: '0 0', overflow: 'hidden' }}>{children}</div>
+    ) : (
+      <>{children}</>
+    );
   return (
     <AbsoluteFill style={{ backgroundColor: bg }}>
+      <Frame>
       <AbsoluteFill style={{ transform: `translate(${x + jitter}px, ${y}px) scale(${x || y ? 1.02 : 1})`, filter: def?.grade && lv > 0 ? def.grade(lv) : undefined }}>
         <ShotFrame>{Shot ? <Shot t={clockAt(seg, f)} len={info?.len ?? seg.b - seg.a} f={f} /> : null}</ShotFrame>
       </AbsoluteFill>
@@ -131,6 +141,7 @@ export const Episode: React.FC<EpisodeProps> = ({ timeline: tl, shots, looks = {
         </svg>
       ) : null}
       {flash ? <AbsoluteFill style={{ backgroundColor: flash.color, opacity: flash.o }} /> : null}
+      </Frame>
       {tl.audio?.voice ? <Audio src={staticFile(tl.audio.voice)} /> : null}
     </AbsoluteFill>
   );
@@ -153,6 +164,7 @@ export const Board: React.FC<{ timeline: Timeline; shots: ShotMap; grain?: boole
 export const defineEpisode = (id: string, p: EpisodeProps) => ({
   id,
   total: p.timeline.total,
+  format: p.timeline.format ?? 'landscape',
   shotCount: p.timeline.shots.length,
   Main: () => <Episode {...p} />,
   Board: () => <Board timeline={p.timeline} shots={p.shots} grain={p.grain} vignette={p.vignette} bg={p.bg} />,

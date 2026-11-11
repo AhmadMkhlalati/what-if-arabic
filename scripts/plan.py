@@ -87,7 +87,7 @@ for e in ep.get('fx', []):
     item['f'] = resolve(e['at'], FPS, segments, ids)
     fx.append(item)
 title = ep.get('title', ['', ''])
-tl = {'slug': slug, 'title': ' '.join(title) if isinstance(title, list) else title, 'fps': FPS, 'total': end, 'segments': segments, 'shots': info, 'fx': fx}
+tl = {'slug': slug, 'title': ' '.join(title) if isinstance(title, list) else title, 'fps': FPS, 'total': end, 'segments': segments, 'shots': info, 'fx': fx, 'format': 'vertical' if str(ep.get('format', 'landscape')).lower() in ('vertical', 'mobile', '9:16') else 'landscape'}
 if voice:
     tl['audio'] = {'voice': f'{slug}/{voice.name}'}
 save_json(ep_dir(slug) / 'timeline.json', tl)
