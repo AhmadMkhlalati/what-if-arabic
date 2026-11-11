@@ -164,386 +164,106 @@
  "edit": [
   {
    "shot": "S1",
-   "at": "Copy",
+   "at": "f:0",
    "look": "copy"
   },
   {
    "shot": "S2",
-   "at": "Paste",
+   "at": "f:31",
    "look": "paste"
   },
   {
    "shot": "S3",
-   "at": "Free"
+   "at": "f:55"
   },
   {
    "shot": "S4",
-   "at": "Copy",
+   "at": "f:102",
    "look": "copy"
   },
   {
    "shot": "S5",
-   "at": "Paste",
+   "at": "f:141",
    "look": "paste"
   },
   {
    "shot": "S6",
-   "at": "Copy",
+   "at": "f:187",
    "look": "copy"
   },
   {
    "shot": "S7",
-   "at": "Paste",
+   "at": "f:228",
    "look": "paste"
   },
   {
    "shot": "S8",
-   "at": "Okay"
+   "at": "f:253"
   },
   {
    "shot": "S9",
-   "at": "What"
+   "at": "f:298"
   },
   {
    "shot": "S10",
-   "at": "One"
+   "at": "f:364"
   },
   {
    "shot": "S11",
-   "at": "a"
+   "at": "f:391"
   },
   {
    "shot": "S12",
-   "at": "One"
+   "at": "f:444"
   },
   {
    "shot": "S13",
-   "at": "needs"
+   "at": "f:506"
   },
   {
    "shot": "S14",
-   "at": "That's"
+   "at": "f:595"
   },
   {
    "shot": "S15",
-   "at": "So"
+   "at": "f:620"
   }
  ],
- "tail": 1.0,
  "fx": [
   {
-   "at": "S2+12",
+   "at": "f:43",
    "kind": "flash",
    "color": "#DDF2FF",
    "o": 0.45
   },
   {
-   "at": "S7+11",
+   "at": "f:239",
    "kind": "flash",
    "color": "#DDF2FF",
    "o": 0.45
   },
   {
-   "at": "S9",
+   "at": "f:298",
    "kind": "flash",
    "color": "#FFF3DC"
   },
   {
-   "at": "S15",
+   "at": "f:620",
    "kind": "flash",
    "color": "#FF3344"
   },
   {
-   "at": "S15",
+   "at": "f:620",
    "kind": "shake",
    "len": 10,
    "amp": 10
   },
   {
-   "at": "S5+12",
+   "at": "f:153",
    "kind": "flash",
    "color": "#DDF2FF",
    "o": 0.35
   }
  ],
- "sound": {
-  "clips": {
-   "sparkle": [
-    "a short bright magical sparkle twinkle, cartoon",
-    0.8
-   ],
-   "pop": [
-    "a cartoon speech bubble pop, short and bright",
-    0.5
-   ],
-   "cat_chirp": [
-    "a cat making a short curious chirp meow",
-    0.6
-   ],
-   "title_boom": [
-    "a cinematic whoosh rising into a deep boom impact",
-    1.6
-   ],
-   "drone_hit": [
-    "a dark ominous low drone hit, deep cinematic horror sting",
-    2.6
-   ],
-   "bulb_pop": [
-    "a small light bulb popping out, a tiny glass tink and fizz",
-    0.5
-   ],
-   "room_tone": [
-    "quiet indoor room tone in the evening, faint distant city hum, no voices",
-    12.5
-   ],
-   "roof_wind": [
-    "a gentle evening breeze on a city rooftop, distant traffic",
-    7.0
-   ],
-   "music": [
-    "playful quirky cartoon background music, pizzicato strings, glockenspiel and soft bass, light and curious, 110 bpm, no vocals",
-    17.0
-   ],
-   "select_draw": [
-    "a quick digital selection sound, a soft rising electronic shimmer as a box is drawn on screen, short",
-    0.6
-   ],
-   "copy_click": [
-    "a crisp satisfying computer copy click with a tiny soft digital chime, short",
-    0.5
-   ],
-   "paste_pop": [
-    "a bright magical pop as an object appears out of thin air, a soft shimmering whoosh into a pop",
-    0.7
-   ],
-   "paper_land": [
-    "a thick stack of paper sheets dropped flat on a wooden desk, a soft slap and rustle",
-    0.7
-   ],
-   "gasp": [
-    "two young people gasping in surprise at the same moment, cartoon, short",
-    0.8
-   ],
-   "gulp": [
-    "a nervous cartoon gulp, short",
-    0.5
-   ],
-   "cookie_crunch": [
-    "one crunchy bite into a chocolate chip cookie, close up",
-    0.6
-   ],
-   "glitch": [
-    "a short digital glitch, an electric buzz and crackle flickering like an unstable hologram",
-    1.5
-   ],
-   "counter_tick": [
-    "a fast mechanical counter ticking up rapidly, digits rolling over, getting faster",
-    1.6
-   ],
-   "power_hum": [
-    "a deep electrical power grid hum swelling louder, transformers buzzing, rising",
-    3.0
-   ],
-   "power_down": [
-    "a whole city losing power, a deep electrical power-down whine dropping in pitch into silence",
-    2.5
-   ],
-   "switch_off": [
-    "a heavy electrical breaker switching off with a dull clunk",
-    0.5
-   ]
-  },
-  "events": [
-   [
-    "S1",
-    "room_tone",
-    0.12,
-    "onset",
-    "S9"
-   ],
-   [
-    "S1+8",
-    "select_draw",
-    0.3
-   ],
-   [
-    "S1+16",
-    "copy_click",
-    0.45
-   ],
-   [
-    "S2+12",
-    "paste_pop",
-    0.6
-   ],
-   [
-    "S2+15",
-    "sparkle",
-    0.25
-   ],
-   [
-    "S3+7",
-    "cat_chirp",
-    0.25
-   ],
-   [
-    "S4+6",
-    "select_draw",
-    0.3
-   ],
-   [
-    "S4+14",
-    "copy_click",
-    0.45
-   ],
-   [
-    "S5+12",
-    "paste_pop",
-    0.55
-   ],
-   [
-    "S5+14",
-    "paper_land",
-    0.5
-   ],
-   [
-    "S5+16",
-    "sparkle",
-    0.2
-   ],
-   [
-    "S6+10",
-    "select_draw",
-    0.3
-   ],
-   [
-    "S6+18",
-    "copy_click",
-    0.45
-   ],
-   [
-    "S7+11",
-    "paste_pop",
-    0.6
-   ],
-   [
-    "S7+16",
-    "gasp",
-    0.4
-   ],
-   [
-    "S9",
-    "title_boom",
-    0.35,
-    "peak"
-   ],
-   [
-    "S9",
-    "roof_wind",
-    0.16,
-    "onset"
-   ],
-   [
-    "S10",
-    "cookie_crunch",
-    0.3
-   ],
-   [
-    "S11+2",
-    "glitch",
-    0.18,
-    "onset",
-    "S12"
-   ],
-   [
-    "S12+3",
-    "pop",
-    0.18
-   ],
-   [
-    "S12+24",
-    "counter_tick",
-    0.16,
-    "onset",
-    "S13"
-   ],
-   [
-    "S13+4",
-    "power_hum",
-    0.12,
-    "onset",
-    "S14"
-   ],
-   [
-    "S15",
-    "drone_hit",
-    0.3
-   ],
-   [
-    "S15+8",
-    "power_down",
-    0.14
-   ],
-   [
-    "S15+48",
-    "switch_off",
-    0.3
-   ]
-  ],
-  "repeats": [
-   {
-    "at": "S3+2",
-    "clip": "pop",
-    "n": 8,
-    "every": 3,
-    "gain": [
-     0.05,
-     0.1
-    ],
-    "pitch": [
-     0.9,
-     1.3
-    ],
-    "note": "the counter stacks pasting in (COUNTER_COOKIES: at 2 + 3i)"
-   },
-   {
-    "at": "S3+5",
-    "clip": "pop",
-    "n": 7,
-    "every": 3,
-    "gain": [
-     0.05,
-     0.1
-    ],
-    "pitch": [
-     0.8,
-     1.15
-    ],
-    "note": "the island stacks (ISLAND_COOKIES: at 5 + 3i)"
-   },
-   {
-    "at": "S15+48",
-    "clip": "bulb_pop",
-    "n": 10,
-    "every": 2,
-    "gain": [
-     0.14,
-     0.26
-    ],
-    "pitch": [
-     0.85,
-     1.18
-    ],
-    "note": "the string lights die after the last word (lightsOut from t 48 over 20 frames)"
-   }
-  ],
-  "music": {
-   "clip": "music",
-   "until": "S10"
-  },
-  "levels": {
-   "sfx_lu": -1.5,
-   "music_lu": -9.5
-  }
- }
+ "end": "f:693"
 }

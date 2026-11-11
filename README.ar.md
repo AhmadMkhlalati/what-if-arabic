@@ -16,7 +16,7 @@
     npx remotion still src/index.ts Portrait out/noor.png --props='{"character":"noor","caption":"نور"}'
     npm run cast        # ورقة كل الشخصيات
 
-للحلقات الكاملة بالصوت تحتاج `ELEVENLABS_API_KEY` وffmpeg وبايثون؛ التفاصيل في `README.md` و`references/arabic.md`.
+للحلقات الكاملة (فيديو بلا صوت) تحتاج ffmpeg وبايثون؛ التفاصيل في `README.md` و`references/arabic.md`.
 
 ## الترخيص والمصدر
 ترخيص MIT. حقوق © 2026 Ahmad Mkhlalati. المشروع مبني على عمل سابق مرخّص بـMIT، ويبقى إشعار حقوقه الأصلي في `LICENSE` كما يشترط الترخيص.

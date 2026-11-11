@@ -60,30 +60,15 @@ shot or a character.
 - **Lands and catches** need the prop to follow the hand exactly: compute the hand with `toWorld(pose,
   joints(pose).armR.end)` and attach the prop there (the proof clip's catch).
 
-## Sound
-
-- **A pop on a word covers the word.** Land illustrative hits in the pause after their word (see `sound.md`).
-- **Beds bury facts.** A rising hum under the science line masked it; beds under key lines stay low (0.1 to 0.15).
-- **A hit's tail runs into the next word.** A 0.6 s beep after "Midnight" still sounded under "Skip": give short
-  hits an `until` cue at the next shot. Time the picture's action into the pause too (the skip episode snaps awake
-  about 10 frames into each skip shot, after the word).
-- **Levelling is per stem.** `sfx.py` levels the whole effects stem, so lowering one event raises the rest.
-- **mixcheck's windows are 0.4 s,** longer than most pauses, so a hit placed correctly in the 0.3 s after a word
-  still gets flagged with it. When a flag sits on a word's last syllable, check that word in 0.1 s windows before
-  moving anything: a fricative tail ("face", "catch") under a bed or a hit that follows it is not a covered word.
-
 ## Pipeline
 
 - **Storyboard first.** A still renders in about two seconds, a full 23 s episode in about two and a half minutes.
   Iterate on stills.
 - **Never cut to an empty frame.** Whatever a shot builds, something is already on at its first frame (start a pop at
   `t + 3`, not `t - 1`).
-- **plan.py lists only audio that exists:** a missing `staticFile` fails the render.
-- **Cue words can't contain a hyphen or a plus:** cue the next word, or use `s:` / `f:`.
+- **Cues are frames:** use `f:`, `s:` or `+n`; there are no word cues without a voice.
 - **Google Fonts need a connection** at render time. Set a local title face in `studio.config.ts` to work offline.
 - **Windows:** `master.py` calls `npx.cmd`; Remotion downloads its own headless Chrome on the first render (about
   110 MB, once).
-- **ElevenLabs costs:** the voice's exact cost is in the history; sound clips only move the account counter, which
-  can lag. Re-read it before reporting.
 - **Remotion Studio can't drag these shots around:** they're computed from the timeline, so retime in
   `episode.json` and re-run `plan.py`.

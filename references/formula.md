@@ -47,8 +47,8 @@ and the sister in danger (6), and ends on "Part 1".
   number, never round one into a different claim.
 - **End on a question or a threat,** never a resolution: "So where are yours coming from?", "It's about to ruin
   your life."
-- **Length:** 45 to 65 words lands at 15 to 25 seconds after voice.py tightens the pauses (about 2.7 words a
-  second). Count before you call the voice: every character costs credits.
+- **Length:** 45 to 65 words lands at 15 to 25 seconds of picture (about 2.7 words a
+  second of reading pace). The script is a plan for the shots; nothing is spoken.
 - **The title card** is the premise, in capitals: line 1 `WHAT IF YOU COULD`, line 2 the power in four words or
   fewer with a question mark. One word of line 2 can pulse as the accent (`10`, `ANYTHING`).
 
@@ -85,5 +85,4 @@ The copy-paste example (`studio/src/episodes/copy-paste/episode.json`), 61 words
 ]
 ```
 
-`voice.py` joins the beats' text with spaces and sends it as one take, so the read flows; the beats are for you and
-for the storyboard.
+The beats are for you and for the storyboard; nothing is voiced.

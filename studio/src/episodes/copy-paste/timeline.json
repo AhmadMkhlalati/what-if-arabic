@@ -303,13 +303,5 @@
    "o": 0.35,
    "f": 153
   }
- ],
- "audio": {
-  "voiceVol": 0.8,
-  "sfxVol": 0.4551,
-  "musicVol": 0.1067,
-  "voice": "copy-paste/voice.mp3",
-  "sfx": "copy-paste/sfx.mp3",
-  "music": "copy-paste/music.mp3"
- }
+ ]
 }

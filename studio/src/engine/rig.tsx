@@ -224,6 +224,7 @@ export const reachAngle = (pose: Pose, target: P) => {
 const Face: React.FC<{ expr: Expr; blink: number; look: number; glasses: number; yaw?: number; ink?: string; glint?: number; glintColor?: string }> = ({ expr, blink, look, glasses, yaw = 0, ink = C.ink, glint = 0, glintColor = '#8FF0FF' }) => {
   const ex = look * 7;
   const ay = Math.min(1, Math.abs(yaw));
+  const darkSkin = ink.toUpperCase() === '#F6EFE3'; // light features on a dark head (the ink look)
   const farHidden = ay > 0.72;
   const farSide = yaw > 0 ? -1 : 1; // facing screen-right hides the screen-left eye
   const eyeY = HEAD.y - 4;
@@ -244,12 +245,14 @@ const Face: React.FC<{ expr: Expr; blink: number; look: number; glasses: number;
         </g>
       );
     const big = expr === 'shock';
-    const rx = big ? 11 : 7;
-    const ry = (big ? 13 : 10) * open;
+    const rx = big ? 11 : 7.5;
+    const ry = (big ? 13 : 11) * open;
+    // a catchlight makes the eyes read alive; on a dark face with light eyes it would vanish, so it's dark there
+    const light = darkSkin ? '#26232F' : '#FFFFFF';
     return (
       <g>
         <ellipse cx={cx + ex} cy={eyeY + (lid ? 3 : 0)} rx={rx} ry={ry} fill={ink} />
-        {big && open > 0.5 ? <circle cx={cx + ex + 3.5} cy={eyeY - 4} r={3.4} fill="#fff" /> : null}
+        {open > 0.5 ? <circle cx={cx + ex + (big ? 3.5 : 2.4)} cy={eyeY - (big ? 4 : 3.5)} r={big ? 3.4 : 2.3} fill={light} /> : null}
         {lid ? <path d={expr === 'tired' ? `M ${cx - 13} ${eyeY - 1} Q ${cx} ${eyeY - 5} ${cx + 13} ${eyeY - 1}` : `M ${cx - 12} ${eyeY - 4} L ${cx + 12} ${eyeY - 2}`} stroke={ink} strokeWidth={4} strokeLinecap="round" fill="none" /> : null}
         {expr === 'tired' ? <path d={`M ${cx - 12} ${eyeY + 14} Q ${cx} ${eyeY + 21} ${cx + 12} ${eyeY + 14}`} stroke="#8C7AA6" strokeWidth={4.5} fill="none" strokeLinecap="round" opacity={0.85} /> : null}
       </g>
@@ -278,8 +281,16 @@ const Face: React.FC<{ expr: Expr; blink: number; look: number; glasses: number;
     dizzy: <path d={`M -14 ${mY + 4} Q -7 ${mY - 4} 0 ${mY + 4} Q 7 ${mY + 12} 14 ${mY + 4}`} stroke={ink} strokeWidth={5} fill="none" strokeLinecap="round" />,
     tired: <path d={`M -11 ${mY + 4} Q 0 ${mY} 11 ${mY + 4}`} stroke={ink} strokeWidth={5} fill="none" strokeLinecap="round" />,
   };
+  // warm cheeks (stronger when happy or shocked), a small nose that points where he faces
+  const blush = expr === 'happy' || expr === 'shock' || expr === 'oops' ? 0.42 : 0.24;
   return (
     <g transform={`translate(${yaw * 30} 0) scale(${1 - 0.28 * ay} 1)`}>
+      {darkSkin
+        ? null
+        : [-1, 1].map((sd) =>
+            farHidden && sd === farSide ? null : <ellipse key={`ch${sd}`} cx={sd * 34} cy={HEAD.y + 18} rx={11} ry={6.5} fill="#FF7F72" opacity={blush} />,
+          )}
+      <path d={`M ${-4 + yaw * 6} ${HEAD.y + 12} q 4 4 8 0`} stroke={ink} strokeWidth={3.5} fill="none" strokeLinecap="round" opacity={0.45} />
       {eye(-21)}
       {eye(21)}
       {brows[expr] ? <path d={brows[expr]} stroke={ink} strokeWidth={5} fill="none" strokeLinecap="round" /> : null}
@@ -315,17 +326,35 @@ export const Hero: React.FC<{ pose: Pose; shadow?: number; rimId?: string; look?
   const j = joints(pose);
   const L = look;
   // limbs are light with a dark outline, so they read on the dark sets (navy limbs vanished on navy walls)
+  // a soft elbow/knee: straight runs into a short curve through the joint (rubber-hose, never a hard corner)
+  const limbPath = (o: { root: P; mid: P; end: P }) => {
+    const k = 0.3;
+    const p1 = { x: lerp(o.mid.x, o.root.x, k), y: lerp(o.mid.y, o.root.y, k) };
+    const p2 = { x: lerp(o.mid.x, o.end.x, k), y: lerp(o.mid.y, o.end.y, k) };
+    return `M ${o.root.x} ${o.root.y} L ${p1.x} ${p1.y} Q ${o.mid.x} ${o.mid.y} ${p2.x} ${p2.y} L ${o.end.x} ${o.end.y}`;
+  };
   const limb = (o: { root: P; mid: P; end: P }, w: number) => {
-    const d = `M ${o.root.x} ${o.root.y} L ${o.mid.x} ${o.mid.y} L ${o.end.x} ${o.end.y}`;
+    const d = limbPath(o);
+    // the upper segment is a touch thicker than the lower one, so a limb tapers like an arm, not a pipe
+    const upper = `M ${o.root.x} ${o.root.y} L ${lerp(o.root.x, o.mid.x, 0.6)} ${lerp(o.root.y, o.mid.y, 0.6)}`;
     return (
       <g>
         <path d={d} stroke={L.line} strokeWidth={w + 7} fill="none" strokeLinecap="round" strokeLinejoin="round" />
+        <path d={upper} stroke={L.line} strokeWidth={w + 10} fill="none" strokeLinecap="round" />
         <path d={d} stroke={L.limb} strokeWidth={w} fill="none" strokeLinecap="round" strokeLinejoin="round" />
+        <path d={upper} stroke={L.limb} strokeWidth={w + 3} fill="none" strokeLinecap="round" />
+        {/* a thin highlight down the lit edge */}
+        <path d={d} stroke="#FFFFFF" strokeWidth={2} fill="none" strokeLinecap="round" opacity={0.12} transform="translate(-2 0)" />
       </g>
     );
   };
+  // a sneaker in profile: rounded toe in the facing direction, a pale sole, a lace mark
   const shoe = (o: { root: P; mid: P; end: P }) => (
-    <ellipse cx={o.end.x + pose.facing * 9} cy={o.end.y + 4} rx={22} ry={11} fill={L.shoe} stroke={L.line} strokeWidth={4} />
+    <g transform={`translate(${o.end.x} ${o.end.y + 4}) scale(${pose.facing} 1)`}>
+      <path d="M -17 -4 Q -19 10 -9 11 L 27 11 Q 34 10 31 1 Q 27 -9 9 -9 L 0 -11 Q -14 -13 -17 -4 Z" fill={L.shoe} stroke={L.line} strokeWidth={4} strokeLinejoin="round" />
+      <path d="M -15 7 L 29 7" stroke="#F4EEE4" strokeWidth={4} strokeLinecap="round" opacity={0.9} />
+      <path d="M 4 -7 L 10 -2 M 10 -8 L 16 -3" stroke={L.line} strokeWidth={2.5} strokeLinecap="round" opacity={0.55} />
+    </g>
   );
   // a mitten along the forearm: the palm, the thumb toward the body, two knuckle marks; or a pointing fist
   const hand = (o: { mid: P; end: P }, side: 1 | -1, kind: HandKind) => {
@@ -351,9 +380,17 @@ export const Hero: React.FC<{ pose: Pose; shadow?: number; rimId?: string; look?
   const kw = turnWidth(pose.yaw);
   const torso = (
     <g transform={`rotate(${pose.tilt}) translate(${pose.yaw * 6} 0) scale(${kw} 1)`}>
-      <path d="M -46 -112 Q 0 -124 46 -112 L 40 2 Q 0 12 -40 2 Z" fill={L.jacket} stroke={L.line} strokeWidth={4} strokeLinejoin="round" />
-      <path d="M 10 -116 Q 30 -114 46 -112 L 40 2 Q 26 8 12 9 Z" fill={L.jacketShade} opacity={0.55} />
+      {/* rounded shoulders, a slight waist, a hem that sits over the hips */}
+      <path d="M -28 -119 Q 0 -125 28 -119 Q 49 -115 49 -94 L 44 -40 Q 41 -18 44 2 Q 0 13 -44 2 Q -41 -18 -44 -40 L -49 -94 Q -49 -115 -28 -119 Z" fill={L.jacket} stroke={L.line} strokeWidth={4} strokeLinejoin="round" />
+      <path d="M 14 -121 Q 47 -117 49 -94 L 44 -40 Q 41 -18 44 2 Q 30 8 14 9 Q 22 -50 14 -121 Z" fill={L.jacketShade} opacity={0.55} />
+      <path d="M -36 -112 Q -40 -100 -40 -86" stroke="#FFFFFF" strokeWidth={3} fill="none" strokeLinecap="round" opacity={0.14} />
       <path d="M 0 -112 L 0 4" stroke={L.jacketShade} strokeWidth={4} />
+      {/* a ribbed hem band */}
+      <path d="M -43 -10 Q 0 0 43 -10" stroke={L.line} strokeWidth={2.5} fill="none" opacity={0.35} />
+      {L.extra === 'hood' ? (
+        // the hoodie's front pocket
+        <path d="M -28 -46 L 28 -46 L 34 -14 Q 0 -8 -34 -14 Z" fill={L.jacketShade} stroke={L.line} strokeWidth={3} strokeLinejoin="round" opacity={0.9} />
+      ) : null}
       {L.extra === 'suit' ? (
         // a white shirt in the V of the jacket and a tie in the accent colour
         <g>
@@ -368,8 +405,24 @@ export const Hero: React.FC<{ pose: Pose; shadow?: number; rimId?: string; look?
   );
   const head = (
     <g transform={`rotate(${pose.tilt}) rotate(${pose.headTilt} 0 ${HEAD.y + 40})`}>
+      {/* ears, only where no hair or scarf covers them; they slide round the head as it turns */}
+      {!L.extra || L.extra === 'curls' || L.extra === 'suit' || L.extra === 'bald'
+        ? [-1, 1].map((sd) => {
+            // turning right shows the left ear more and tucks the right one behind the head, and vice versa
+            const hidden = Math.abs(pose.yaw) > 0.6 && Math.sign(pose.yaw) === sd;
+            const ex = sd * (HEAD.r - 2) - pose.yaw * 14;
+            return hidden ? null : (
+              <g key={`ear${sd}`}>
+                <ellipse cx={ex} cy={HEAD.y + 6} rx={12} ry={16} fill={L.skin} stroke={L.line} strokeWidth={4} />
+                <path d={`M ${ex + sd * 2} ${HEAD.y - 2} q ${sd * 5} 8 0 16`} stroke={L.skinShade} strokeWidth={4} fill="none" strokeLinecap="round" />
+              </g>
+            );
+          })
+        : null}
       <circle cx={HEAD.x} cy={HEAD.y} r={HEAD.r} fill={L.skin} stroke={L.line} strokeWidth={4} />
       <path d={`M ${HEAD.x + 14} ${HEAD.y + 58} A ${HEAD.r} ${HEAD.r} 0 0 0 ${HEAD.x + 60} ${HEAD.y + 14} A 70 70 0 0 1 ${HEAD.x + 14} ${HEAD.y + 58} Z`} fill={L.skinShade} />
+      {/* a soft highlight on the lit side of the head */}
+      <path d={`M ${HEAD.x - 44} ${HEAD.y - 20} A 50 50 0 0 1 ${HEAD.x - 14} ${HEAD.y - 50}`} stroke="#FFFFFF" strokeWidth={6} fill="none" strokeLinecap="round" opacity={0.28} />
       {L.extra === 'bunches' || L.extra === 'bob' || L.extra === 'suit' || L.extra === 'hijab' || L.extra === 'bald' ? null : (
         <path transform={`translate(${-pose.yaw * 16} 0)`} d={`M -6 ${HEAD.y - 60} q 10 -26 30 -18 q -16 2 -14 16 q -8 -10 -16 2 Z`} fill={L.hair} />
       )}

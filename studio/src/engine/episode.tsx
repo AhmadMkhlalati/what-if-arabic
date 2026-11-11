@@ -4,8 +4,7 @@ import { clamp, lerp } from './anim';
 import { KitDefs } from './kit';
 import { SetDefs } from './light';
 
-// The episode engine. An episode is a set of shots plus a timeline (written by scripts/plan.py from the voice's word
-// timings). Each shot is a pure function of its own clock t, so the edit can cut back to a shot, hold it, or play it
+// The episode engine. An episode is a set of shots plus a timeline (written by scripts/plan.py from the edit's frame cues). Each shot is a pure function of its own clock t, so the edit can cut back to a shot, hold it, or play it
 // backwards: a segment just says which stretch of the shot's clock it shows.
 
 export type Seg = {
@@ -27,7 +26,7 @@ export type Timeline = {
   segments: Seg[];
   shots: ShotInfo[];
   fx: Fx[];
-  audio: { voice?: string; sfx?: string; music?: string; voiceVol?: number; sfxVol?: number; musicVol?: number };
+  audio?: { voice?: string }; // the user's own recording, if they supplied one (public/<slug>/voice.*)
 };
 
 /** What every shot receives: its own clock t, how long its clock runs (len), and the global frame f. */
@@ -120,7 +119,6 @@ export const Episode: React.FC<EpisodeProps> = ({ timeline: tl, shots, looks = {
   const lv = run ? Math.min(clamp((f - run.a + 1) / 2), clamp((run.b - f) / 2)) : 0;
   const jitter = def?.jitter && lv > 0 ? Math.sin(f * 13.7) * def.jitter * lv : 0;
   const { flash, x, y } = fxAt(tl, f);
-  const A = tl.audio;
   return (
     <AbsoluteFill style={{ backgroundColor: bg }}>
       <AbsoluteFill style={{ transform: `translate(${x + jitter}px, ${y}px) scale(${x || y ? 1.02 : 1})`, filter: def?.grade && lv > 0 ? def.grade(lv) : undefined }}>
@@ -133,14 +131,12 @@ export const Episode: React.FC<EpisodeProps> = ({ timeline: tl, shots, looks = {
         </svg>
       ) : null}
       {flash ? <AbsoluteFill style={{ backgroundColor: flash.color, opacity: flash.o }} /> : null}
-      {A.voice ? <Audio src={staticFile(A.voice)} volume={A.voiceVol ?? 1} /> : null}
-      {A.sfx ? <Audio src={staticFile(A.sfx)} volume={A.sfxVol ?? 1} /> : null}
-      {A.music ? <Audio src={staticFile(A.music)} volume={A.musicVol ?? 1} /> : null}
+      {tl.audio?.voice ? <Audio src={staticFile(tl.audio.voice)} /> : null}
     </AbsoluteFill>
   );
 };
 
-/** The storyboard: frame i is shot i at its key frame, no audio, no look. Render it with scripts/stills.mjs. */
+/** The storyboard: frame i is shot i at its key frame, no look. Render it with scripts/stills.mjs. */
 export const Board: React.FC<{ timeline: Timeline; shots: ShotMap; grain?: boolean; vignette?: boolean; bg?: string }> = ({ timeline: tl, shots, grain = true, vignette = true, bg = '#0E0C1E' }) => {
   const f = useCurrentFrame();
   const info = tl.shots[Math.min(f, tl.shots.length - 1)];

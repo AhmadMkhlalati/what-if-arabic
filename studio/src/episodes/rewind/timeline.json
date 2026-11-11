@@ -289,13 +289,5 @@
    "amp": 12,
    "f": 143
   }
- ],
- "audio": {
-  "voice": "rewind/voice.mp3",
-  "sfx": "rewind/sfx.mp3",
-  "music": "rewind/music.mp3",
-  "voiceVol": 0.8,
-  "sfxVol": 0.5165,
-  "musicVol": 0.1225
- }
+ ]
 }
